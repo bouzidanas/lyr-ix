@@ -38,9 +38,10 @@ interface LyricsProps {
   trailingSpace?: string;
   readScrollRatio?: number;
   theme?: "inherit" | "spotify" | "lyrix";
+  action?: "play" | "pause" | "none";
 }
 
-const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "5rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit" }: LyricsProps) => {
+const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "5rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none" }: LyricsProps) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n")); 
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
@@ -102,6 +103,17 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
     }
   }, [currentLine, lyricsArray.length, readScrollRatio]);
 
+  useEffect(() => {
+    if (action === "play") {
+      timer.start();
+      console.log("playing");
+    }
+    else if (action === "pause") {
+      timer.pause();
+      console.log("pausing");
+    }
+  }, [action, timer]);
+
   // Add default CSS in an overideable way
   const completeCSS = typeof css === "string" ? `display: flex;
 flex-direction: column;
@@ -145,7 +157,7 @@ ${theme === "spotify" ? `& div.line {
 }` : "")}
 ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none" }, '& div.line:hover': { color: highlightColor, filter: "none" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#ffffff33", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
-  // console.log("render")
+  // console.log("render");
 
   return (
     <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >
