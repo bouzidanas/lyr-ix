@@ -3,7 +3,6 @@ import './App.css'
 import Lyrics from './components/Lyrics';
 
 function App() {
-  const [rerender, setRerender] = useState<boolean>(false);
   const lyrics = `
   [01:09.15]We're all chemicals, vitamins and minerals
   [01:11.55]And Vicodin with inner tubes, wrapped around the arm
@@ -165,15 +164,25 @@ function App() {
   `;
 
   const action = useRef<"none"|"play"|"pause">('none');
+  const [position, setPosition] = useState<number>(0);
+
+  // Test the goTo and Play functionality
+  useEffect(() => {
+    setTimeout(() => {
+      action.current = 'play';
+      setPosition(12);
+    }, 4000);
+  }, []);
 
   return (
     <>
       <h1 className='mb-24'>Mural - Lupe Fiasco</h1> 
       <Lyrics 
+        key={position}
         className='max-w-2xl'
         lyrics={lyrics} 
         height='640px'
-        start={3} 
+        start={position} 
         highlightColor='#ffffffbb'
         fadeStop='0%'
         theme='lyrix'
