@@ -32,7 +32,7 @@ So I'm sorry young man, there's no skating here
         start={0} 
         highlightColor='#ffffffbb'
         fadeStop='0%'
-        theme='lyrix'
+        theme='spotify'
       />
     </>
   )
