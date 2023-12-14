@@ -41,11 +41,12 @@ interface LyricsProps {
   action?: "play" | "pause" | "none";
 }
 
-const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "5rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none" }: LyricsProps) => {
+const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none" }: LyricsProps) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n")); 
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
   const delay = useRef<number>(1000);
+  const lastAction = useRef<"play" | "pause" | "none">(action);
 
   // If timestamps are not provided, look for them in the lyrics (lrc format)
   const timeStamps = timestamps ?? lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).timestamps : undefined;
@@ -56,6 +57,8 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   const callback = React.useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
   // Create the timer
   const timer = useTimer({ delay: delay.current ?? 1000 }, callback);
+
+  // isPlaying.current = timer.isRunning();
 
   // The following line MUST come after the timer so that `timer` is defined and accessible.
   // Note that when the timer is running, the current delay is already being traversed,
@@ -104,13 +107,17 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   }, [currentLine, lyricsArray.length, readScrollRatio]);
 
   useEffect(() => {
-    if (action === "play") {
-      timer.start();
-      console.log("playing");
-    }
-    else if (action === "pause") {
-      timer.pause();
-      console.log("pausing");
+    if (action !== lastAction.current) {
+      lastAction.current = action;
+    
+      if (action === "play") {
+        timer.start();
+        console.log("playing");
+      }
+      else if (action === "pause") {
+        timer.pause();
+        console.log("pausing");
+      }
     }
   }, [action, timer]);
 
