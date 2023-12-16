@@ -169,7 +169,8 @@ function App() {
   // Test the goTo and Play functionality
   useEffect(() => {
     setTimeout(() => {
-      setPosition(28);
+      action.current = 'play';
+      setPosition(1);
     }, 10000);
   }, []);
 

@@ -46,7 +46,7 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
   const delay = useRef<number>(1000);
-  const lastAction = useRef<"play" | "pause" | "none">(action);
+  const lastAction = useRef<"play" | "pause" | "none">('none');
 
   // If timestamps are not provided, look for them in the lyrics (lrc format)
   const timeStamps = timestamps ?? lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).timestamps : undefined;
@@ -106,20 +106,18 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
     }
   }, [currentLine, lyricsArray.length, readScrollRatio]);
 
-  useEffect(() => {
-    if (action !== lastAction.current) {
-      lastAction.current = action;
-    
-      if (action === "play") {
-        timer.start();
-        console.log("playing");
-      }
-      else if (action === "pause") {
-        timer.pause();
-        console.log("pausing");
-      }
+  if (action !== lastAction.current) {
+    lastAction.current = action;
+  
+    if (action === "play") {
+      timer.start();
+      console.log("playing");
     }
-  }, [action, timer]);
+    else if (action === "pause") {
+      timer.pause();
+      console.log("pausing");
+    }
+  }
 
   // Add default CSS in an overideable way
   const completeCSS = typeof css === "string" ? `display: flex;
