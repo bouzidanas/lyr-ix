@@ -12,6 +12,7 @@ A component for displaying synced song lyrics.
   
 ### `<Lyrics>` component
 - Lyrics control media playback positions. If you trigger play on a line, the media will play from that line's timestamp (i.e beginning of line).
+- Special page scrolling that keeps the current line visible during play.
 - Keyboard shortcuts for controlling media playback and lyrics navigation. `Up`/`Down` arrows for scroll, `Spacebar` for page scroll, and `Enter` for play/pause.
 - Mouse scroll for scroll and click for play/pause. Clicking any line will highlight that line and pause media if playing, and move play position to beginning of line. Clicking the line again will play media from this new position.
 - Two built-in themes: `lyr-ix` and `spotify`. `lyr-ix` is the default theme. `spotify` is a theme that mimics the Spotify lyrics aesthetic.
