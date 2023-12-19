@@ -2,9 +2,17 @@ import { useRef, useState } from 'react';
 import './App.css'
 import Lyrics from './components/Lyrics';
 import { HiOutlinePlay, HiOutlinePause } from "react-icons/hi2"
-import { lyrics } from './assets/put-you-on-game';
+import { lyrics } from './assets/the-awakening';
 
-function App() {
+interface LyricCardProps {
+  title?: string;
+  lrc?: string;
+  src?: string;
+  height?: string;
+  className?: string;
+}
+
+const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='670px', className='' }: LyricCardProps) => {
   const [action, setAction] = useState<"play" | "pause" | "none">('pause');
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -35,12 +43,12 @@ function App() {
 
   return (
     <>
-      <div className='flex flex-col justify-center items-center gap-12 max-w-xl p-12 bg-black/5 rounded-2xl shadow-xl'>
+      <div className={'flex flex-col justify-center items-center gap-12 max-w-xl p-12 bg-black/5 rounded-2xl shadow-xl' + className}>
         <Lyrics 
           key={0}
-          className='max-w-2xl'
-          lyrics={lyrics} 
-          height='670px'
+          className='max-w-7xl'
+          lyrics={lrc} 
+          height={height}
           start={0} 
           highlightColor='#ffffffbb'
           fadeStop='0%'
@@ -59,13 +67,13 @@ function App() {
             }
           </button> 
           <span className='inline-flex text-2xl h-full items-center'>
-              Put You On Game - Lupe Fiasco
+              {title}
           </span>
         </div>
       </div>
-      <audio ref={audioRef} src='/Put You on Game.mp3' onEnded={() => handleOnPause()} />
+      <audio ref={audioRef} src={src} onEnded={() => handleOnPause()} />
     </>
   )
 }
 
-export default App
+export default LyricsCard;

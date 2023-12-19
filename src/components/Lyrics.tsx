@@ -66,7 +66,9 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   // Note that when the timer is running, the current delay is already being traversed,
   // so we need to set the delay to the next one (i.e currentLine + 1)
   delay.current = timeDeltas ? (timer.isRunning() ? (timeDeltas.length > currentLine + 1 ? timeDeltas[currentLine + 1] : 1000) : (timeDeltas.length > currentLine ? timeDeltas[currentLine] : 1000)) : 1000;
-  
+  // console.log(delay.current);
+
+
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
   useEffect(() => {

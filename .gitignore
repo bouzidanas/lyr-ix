@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Public files
+public/Mural.mp3
+public/Put\ You\ on\ Game.mp3
+
+# Assets files
+assets/mural.ts
+assets/put-you-on-game.ts
