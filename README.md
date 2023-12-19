@@ -31,15 +31,15 @@ npm install bouzidanas/lyr-ix
 
 For usage see `<LyricsCard>` component in [`src/components/LyricsCard.js`](https://github.com/bouzidanas/lyr-ix/blob/master/src/components/LyricsCard.tsx) of this repo. It is a simple example of how to use the `<Lyrics>` component.
 
-## Lyrics Themes
+## Themes
 ### `lyr-ix` theme
 ![lyr-ix style](https://github.com/bouzidanas/lyr-ix/assets/25779130/a8064cf3-ce29-475b-b3fc-69094b260023)
 ### `spotify` theme
 ![spotify style](https://github.com/bouzidanas/lyr-ix/assets/25779130/26386213-0193-4813-b6a3-3e1d3176375b)
 
-## LyricsCard Demo
+## Demo
 
-[![Static Badge](https://img.shields.io/badge/Demo-415a77?style=for-the-badge)](https://lyr-ix.vercel.app/)
+[![Static Badge](https://img.shields.io/badge/LyricsCard_Demo-415a77?style=for-the-badge)](https://lyr-ix.vercel.app/)
 
 https://github.com/bouzidanas/lyr-ix/assets/25779130/cd581c47-f760-4ed3-a248-dd4cbe2699eb
 
