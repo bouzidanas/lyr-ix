@@ -7,11 +7,11 @@ export const lyrics = `
 [00:48.12]They love my darkness, I've made them heartless
 [00:51.64]And in return they have become my martyrs
 [00:54.45]I've been in the poem of many a poet
-[00:56.59]And I reside in the art of many a artist
+[00:56.90]And I reside in the art of many a artist
 [01:00.12]Some of your smartest have tried to artictulate
 [01:02.70]My whole part in this but they're fruitless in their harvest
 [01:05.61]The dro grows from my footsteps, I'm the one
-[01:08.28]That they follow, I am the one that they march with
+[01:08.36]That they follow, I am the one that they march with
 [01:11.79]Through the back alleys and the black markets
 [01:14.22]The Oval Offices, the crackhouses and apartments
 [01:18.28]Through the mazes of the queens, the pages
@@ -42,7 +42,7 @@ export const lyrics = `
 [02:25.07]You can watch on TV how they should
 [02:26.92]Properly depict you, the rivers should flow
 [02:28.93]With liqours, quench your thirst on my elixers
-[02:30.91]I am the safe haven for the rebel runaway and the resistor
+[02:30.81]I am the safe haven for the rebel runaway and the resistor
 [02:34.64]The trusted misleader, the number one defender
 [02:37.92]And from a throne of their bones I rule
 [02:40.44]These fools are my fuel so I make them cool

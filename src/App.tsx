@@ -15,24 +15,20 @@ function App() {
   
   const handleOnPause = () => {
     audioRef.current?.pause();
-    console.log('paused');
     setUsePlayIcon(true);
   }
   
   const handleOnPlay = (time: number) => {
     audioRef.current? audioRef.current.currentTime = time : null;
     audioRef.current?.play();
-    console.log('played');
     setUsePlayIcon(false);
   }
 
   const togglePlay = () => {
     console.log('toggle play: ' + audioRef.current?.paused);
     if (action === 'none' || action === 'pause') {
-      console.log('right before play');
       setAction('play');
     } else {
-      console.log('right before pause');
       setAction('pause');
     }
   }
@@ -55,19 +51,19 @@ function App() {
           onPlay={handleOnPlay}
           action={action}
         />
-        <div className='flex flex-row justify-left items-center h-10 w-full gap-4 mb-[-0.7rem]' >
-          <button onClick={() => togglePlay()} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 m-[-4px]'>
+        <div className='flex flex-row justify-left items-center h-10 w-full gap-5 mb-[-0.7rem]' >
+          <button onClick={() => togglePlay()} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 m-[-4px] mb-[-6px]'>
             {usePlayIcon ? 
               <HiOutlinePlay className='cursor-pointer' size={32} /> : 
               <HiOutlinePause className='cursor-pointer' size={32} />
             }
           </button> 
-          <span className='inline-flex text-xl h-full items-center'>
-              Put You on Game - Lupe Fiasco
+          <span className='inline-flex text-2xl h-full items-center'>
+              Put You On Game - Lupe Fiasco
           </span>
         </div>
       </div>
-      <audio ref={audioRef} src='/Put You on Game.mp3' />
+      <audio ref={audioRef} src='/Put You on Game.mp3' onEnded={() => handleOnPause()} />
     </>
   )
 }
