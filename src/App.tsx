@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css'
 import Lyrics from './components/Lyrics';
+import { HiOutlinePlay, HiOutlinePause } from "react-icons/hi2"
+
 
 function App() {
   const lyrics = `
@@ -163,31 +165,70 @@ function App() {
   [08:41.49]Defeat Samsara achieves nirvana and brilliance, yeah
   `;
 
-  const action = useRef<"none"|"play"|"pause">('none');
-  const [position, setPosition] = useState<number>(0);
+  const [action, setAction] = useState<"play" | "pause" | "none">('none');
+  const [usePlayIcon, setUsePlayIcon] = useState(true);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Test the goTo and Play functionality
-  useEffect(() => {
-    setTimeout(() => {
-      action.current = 'play';
-      setPosition(1);
-    }, 10000);
-  }, []);
+  const handleOnUserLineChange = (time: number) => {
+    audioRef.current? audioRef.current.currentTime = time : null;
+  }
+  
+  const handleOnPause = () => {
+    audioRef.current?.pause();
+    console.log('paused');
+    setUsePlayIcon(true);
+  }
+  
+  const handleOnPlay = (time: number) => {
+    audioRef.current? audioRef.current.currentTime = time : null;
+    audioRef.current?.play();
+    console.log('played');
+    setUsePlayIcon(false);
+  }
+
+  const togglePlay = () => {
+    console.log('toggle play: ' + audioRef.current?.paused);
+    if (action === 'none' || action === 'pause') {
+      console.log('right before play');
+      setAction('play');
+    } else {
+      console.log('right before pause');
+      setAction('pause');
+    }
+  }
 
   return (
     <>
       <h1 className='mb-24'>Mural - Lupe Fiasco</h1> 
-      <Lyrics 
-        key={position}
-        className='max-w-2xl'
-        lyrics={lyrics} 
-        height='640px'
-        start={position} 
-        highlightColor='#ffffffbb'
-        fadeStop='0%'
-        theme='lyrix'
-        action={action.current}
-      />
+      <div className='flex flex-col justify-center items-center gap-8'>
+        <Lyrics 
+          key={0}
+          className='max-w-2xl'
+          lyrics={lyrics} 
+          height='630px'
+          start={0} 
+          highlightColor='#ffffffbb'
+          fadeStop='0%'
+          theme='lyrix'
+          trailingSpace='5rem'
+          onUserLineChange={handleOnUserLineChange}
+          onPause={handleOnPause}
+          onPlay={handleOnPlay}
+          action={action}
+        />
+        <div>
+          
+        </div>
+        <div className='flex flex-row justify-center items-center' >
+          <button onClick={() => togglePlay()} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit'>
+            {usePlayIcon ? 
+              <HiOutlinePlay className='cursor-pointer' size={32} /> : 
+              <HiOutlinePause className='cursor-pointer' size={32} />
+            }
+          </button>
+        </div>
+      </div>
+      <audio ref={audioRef} src='/Mural.mp3' />
     </>
   )
 }

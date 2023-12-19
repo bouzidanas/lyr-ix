@@ -17,7 +17,7 @@ const processLrcLyrics = (lyrics: string) => {
   lines.forEach(line => {
     const match = lrcTimestampRegex.exec(line);
     if (match) {
-      timestamps.push((parseInt(match[1]) * 60 * 1000 + parseInt(match[2]) * 1000 + parseInt(match[3]))/1000);
+      timestamps.push((parseInt(match[1]) * 60 * 1000 + parseInt(match[2]) * 1000 + parseInt(match[3])*10) / 1000);
       processedLines.push(line.replace(lrcTimestampRegex, "").trim());
     }
   });
@@ -39,14 +39,18 @@ interface LyricsProps {
   readScrollRatio?: number;
   theme?: "inherit" | "spotify" | "lyrix";
   action?: "play" | "pause" | "none";
+  onPlay?: (time: number) => void;
+  onPause?: () => void;
+  onUserLineChange?: (line: number, time: number) => void;
 }
 
-const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none" }: LyricsProps) => {
-  const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n")); 
+const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onUserLineChange = undefined, onPause = undefined, onPlay = undefined }: LyricsProps) => {
+  const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
   const delay = useRef<number>(1000);
   const lastAction = useRef<"play" | "pause" | "none">('none');
+  const callbackAfterRender = useRef<number>(0);
 
   // If timestamps are not provided, look for them in the lyrics (lrc format)
   const timeStamps = timestamps ?? lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).timestamps : undefined;
@@ -70,7 +74,13 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Enter") {
-        timer.isRunning() ? timer.pause() : timer.start();
+        if (timer.isRunning()) {
+          timer.pause();
+          if (onPause) onPause();
+        } else {
+          timer.start();
+          if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
+        }
         e.preventDefault();
       }
     }
@@ -80,7 +90,7 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
     return function cleanup() {
       document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [timer, currentLine, timeDeltas]);
+  }, [timer, currentLine, timeStamps, onPause, onPlay]);
 
   // Scrolling logic: Scroll to keep the current line in the
   // desired visible range.
@@ -108,16 +118,29 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
 
   if (action !== lastAction.current) {
     lastAction.current = action;
-  
     if (action === "play") {
       timer.start();
+      callbackAfterRender.current = 1
       console.log("playing");
     }
     else if (action === "pause") {
       timer.pause();
+      callbackAfterRender.current = 2
       console.log("pausing");
     }
   }
+
+  useEffect(() => {
+    if (callbackAfterRender.current > 0) {
+      if (callbackAfterRender.current === 1) {
+        callbackAfterRender.current = 0;
+        if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
+      } else if (callbackAfterRender.current === 2) {
+        callbackAfterRender.current = 0;
+        if (onPause) onPause();
+      }
+    }
+  });
 
   // Add default CSS in an overideable way
   const completeCSS = typeof css === "string" ? `display: flex;
@@ -169,7 +192,26 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
       <Global styles={CSS(googleFonts)} />
       <div key="space-before" className="spacer" css={CSS({ minHeight: trailingSpace })}></div>
       {lyricsArray.map((line, index) => (
-        <div key={index} className={"line " + (index === currentLine ? "current" : "")} onClick={() => { currentLine === index ? (timer.isRunning() ? timer.pause() : timer.start()) : timer.pause(); setCurrentLine(index); }} >
+        <div
+          key={index}
+          className={"line " + (index === currentLine ? "current" : "")}
+          onClick={() => {
+            if (currentLine === index) {
+              if (timer.isRunning()) {
+                timer.pause();
+                if (onPause) onPause();
+              } else {
+                timer.start();
+                if (onPlay && timeStamps && timeStamps.length > index) onPlay(timeStamps[index]);
+              }
+            } else {
+              timer.pause();
+              if (onPause) onPause();
+              setCurrentLine(index);
+              if (onUserLineChange) onUserLineChange(index, timeStamps && timeStamps.length > index ? timeStamps[index] : -1);
+            }
+          }}
+        >
           {line.trim()}
         </div>
       ))}
