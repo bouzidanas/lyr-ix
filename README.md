@@ -21,8 +21,6 @@ A component for displaying synced song lyrics.
 - `action` prop for triggering media playback from outside the component like, for example, via a button in the app. This is also useful for syncing the component with a media player.
 - Other configuration parameters allow for changing start position, setting highlight color, add spacing before and after lyrics, and more.
 
-`<LyricsCard>` component:
-
 ## Installation
 
 ```bash
