@@ -38,4 +38,4 @@ For usage see `<LyricsCard>` component in [`src/components/LyricsCard.js`](https
 
 ## License
 
-[![Static Badge](https://img.shields.io/badge/License-MIT-415a77?style=for-the-badge)](
+[![Static Badge](https://img.shields.io/badge/License-MIT-415a77?style=for-the-badge)](https://github.com/bouzidanas/lyr-ix/blob/master/LICENSE)
