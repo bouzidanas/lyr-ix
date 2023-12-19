@@ -38,7 +38,6 @@ const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - T
   }
 
   const togglePlay = () => {
-    console.log('toggle play: ' + audioRef.current?.paused);
     if (action === 'none' || action === 'pause') {
       setAction('play');
     } else {
