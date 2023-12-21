@@ -60,6 +60,7 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   // Callback function for the timer to call at the end of the delay
   const callback = React.useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
   // Create the timer
+  console.log(delay.current);
   const timer = useTimer({ delay: delay.current ?? 1000 }, callback);
   
   // The following line MUST come after the timer so that `timer` is defined and accessible.
