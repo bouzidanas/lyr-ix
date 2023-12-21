@@ -46,7 +46,6 @@ const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - T
   }
 
   return (
-    <>
       <div className={'flex flex-col justify-center items-center gap-12 max-w-xl p-12 bg-black/5 rounded-2xl shadow-xl' + className}>
         <Lyrics 
           key={0}
@@ -74,9 +73,8 @@ const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - T
               {title}
           </span>
         </div>
+        <audio ref={audioRef} src={src} onEnded={() => handleOnPause()} />
       </div>
-      <audio ref={audioRef} src={src} onEnded={() => handleOnPause()} />
-    </>
   )
 }
 
