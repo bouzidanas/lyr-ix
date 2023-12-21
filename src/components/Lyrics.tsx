@@ -230,7 +230,7 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
                 if (onPlay && timeStamps && timeStamps.length > index) onPlay(timeStamps[index]);
               }
             } else {
-              delay.current = timeDeltas ? (timeDeltas.length > index ? timeDeltas[index] : 1000) : 1000;
+              // delay.current = timeDeltas ? (timeDeltas.length > index ? timeDeltas[index] : 1000) : 1000;
               timer.pause();
               if (onPause) onPause();
               setCurrentLine(index);
