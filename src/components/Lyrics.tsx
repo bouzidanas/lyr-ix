@@ -73,7 +73,8 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   // (and handle cleanup when the component unmounts)
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Enter") {
+      if (e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
         if (timer.isRunning()) {
           timer.pause();
           if (onPause) onPause();
@@ -81,7 +82,30 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
           timer.start();
           if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
         }
-        e.preventDefault();
+      }
+      else if (e.shiftKey && e.key === "Enter") {
+        const lyricsElement = document.getElementById(lId.current);
+        if (e.repeat) {
+          lyricsElement?.scrollTo({ top: lyricsElement.scrollTop - lyricsElement.getBoundingClientRect()?.height??200, behavior: "smooth" });
+        } else {
+          lyricsElement?.scrollTo({ top: lyricsElement.scrollTop - lyricsElement.getBoundingClientRect()?.height??200, behavior: "smooth" });
+        }
+      }
+      else if (e.key === "Enter") {
+        const lyricsElement = document.getElementById(lId.current);
+        lyricsElement?.scrollTo({ top: lyricsElement.scrollTop + lyricsElement.getBoundingClientRect()?.height??200, behavior: "smooth" });
+      }
+      
+      if (e.repeat) {
+        if (e.key === "Enter"){
+          const lyricsElement = document.getElementById(lId.current);
+          if (e.shiftKey) {
+            lyricsElement?.scrollTo({ top: lyricsElement.scrollTop-=200, behavior: "auto" });
+          }
+          else {
+            lyricsElement?.scrollTo({ top: lyricsElement.scrollTop+=200, behavior: "auto" });
+          }
+        }
       }
     }
     document.addEventListener('keydown', handleKeyDown);
