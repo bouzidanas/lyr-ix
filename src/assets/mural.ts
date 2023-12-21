@@ -1,20 +1,21 @@
 export const lyrics = `
+[00:00.00]♫
 [01:09.15]We're all chemicals, vitamins and minerals
 [01:11.55]And Vicodin with inner tubes, wrapped around the arm
-[01:14.78]To see the vein like a chicken on the barn
+[01:14.78]To see the vein like a <span class='birds'>chicken</span> on the barn
 [01:17.44]Top Cat chat, let's begin another yarn
-[01:20.14]That's flying saucer cheese, or is it chicken parm?
-[01:23.03]But roosters don't fly like boosters don't buy
+[01:20.14]That's flying saucer cheese, or is it <span class='birds'>chicken</span> parm?
+[01:23.03]But <span class='birds'>roosters</span> don't <span class='birds'>fly</span> like boosters don't buy
 [01:25.80]So what powers cowards to get them to the top?
 [01:28.84]Just to fall asleep listening to Bach
 [01:31.61]The ribbon in the sky is the ribbon that I drop
 [01:34.52]Dribbling the eye across the prism of a clock
 [01:37.30]That lacks meaning but racks up stacks of fat reading
-[01:40.18]They catch chief and wrapped up plants from trap dealings
-[01:44.08]Now what's a coffin with a scratched ceiling?
+[01:40.18]They catch <span class='na'>chief</span> and wrapped up plants from trap dealings
+[01:44.08]Now what's a <span class='burial'>coffin</span> with a scratched ceiling?
 [01:47.01]And what's the talking without the match feeling
-[01:49.03]As buried living and cherry picking every lemon
-[01:51.62]From your berry system then proceed with the pack feeding
+[01:49.03]As <span class='burial'>buried</span> living and cherry picking every lemon
+[01:51.62]From your berry system then proceed with the <span class='birds'>pack</span> feeding
 [01:54.79]When I was young, I had visions of another world
 [01:57.41]Sneaking looks at the porn stash of my brother Hurl
 [02:00.38]Incense smoke made vortices and other curls
@@ -40,7 +41,7 @@ export const lyrics = `
 [02:57.39]Means I can still be the man if the dam breaks
 [03:00.15]And when demand brakes, some reflections what they can't face
 [03:03.00]My peers will still treat the mirror, like it's a fan base
-[03:05.87]The unfettered veteran, the eagle feathered man of medicine
+[03:05.87]The unfettered veteran, the <span class='birds'>eagle</span> <span class='birds'>feathered</span> man of medicine
 [03:09.22]That hovers above cities like weathermen
 [03:11.55]And maybe weather women
 [03:12.84]Whatever better to tell your weather coming
@@ -54,7 +55,7 @@ export const lyrics = `
 [03:34.57]And not wave hand like it's a heat wave
 [03:36.70]So you make a fan by waving your hand
 [03:38.73]I'm talking wave like you saying "hey, man"
-[03:41.73]And not hay for horses and horses like you almost voiceless
+[03:41.73]And not hay for horses and hoarse is like you almost voiceless
 [03:44.63]You got to treat your vocal chords like it's a fortress
 [03:46.80]And treat every single one of your words like reinforcements and
 [03:49.49]Especially when you're recording cause that's the portion that's important
@@ -63,8 +64,8 @@ export const lyrics = `
 [03:58.20]Crying shames, make margarita rims from cheap tops
 [04:01.01]Deep plots in floor to ceiling windows for my peep pots
 [04:03.77]A little scene with the sickle swings to make the wheat drop
-[04:06.45]In a hundred words, but them humming birds like to ease drop
-[04:09.41]And fan out like peacocks with a parakeet that beat box
+[04:06.45]In a hundred words, but them <span class='birds'>humming birds</span> like to ease drop
+[04:09.41]And fan out like <span class='birds'>peacocks</span> with a <span class='birds'>parakeet</span> that beat box
 [04:12.11]So the sun rise when the beat drops and the sun dies when the beat stops
 [04:16.46]Then it unties, then it relocks
 [04:17.88]Then it relapse, then it detox then heat back like a heat pack

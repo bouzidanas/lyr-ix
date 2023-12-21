@@ -176,12 +176,14 @@ ${theme === "spotify" ? `& div.line {
   font-weight: 700;
   line-height: 2.4rem;
   letter-spacing: -.01em;
-  color: #ffffff22;
+  color: #ffffff;
   text-align: left;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  opacity: 0.2;
+  filter: blur(1px);
 }` : "")}
-${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none" }, '& div.line:hover': { color: highlightColor, filter: "none" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#ffffff33", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem", filter: "blur(1px)" } : {}), ...css } as CSSObject;
+${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
   // console.log("render");
 
@@ -209,9 +211,8 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
               if (onUserLineChange) onUserLineChange(index, timeStamps && timeStamps.length > index ? timeStamps[index] : -1);
             }
           }}
-        >
-          {line.trim()}
-        </div>
+          dangerouslySetInnerHTML={{ __html: line.trim()}} 
+        />
       ))}
       <div key="space-after" className="spacer" css={CSS({ minHeight: trailingSpace })}></div>
     </div>
