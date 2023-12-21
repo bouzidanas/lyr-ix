@@ -56,7 +56,7 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   const timeStamps = timestamps ?? lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).timestamps : undefined;
 
   // Calculate time deltas ie. time between highlighting each line of the lyrics
-  const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? (timeStamps[index + 1] - timestamp) * 1000 : 1000);
+  const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? Math.floor((timeStamps[index + 1] - timestamp) * 1000) : 1000);
   // Callback function for the timer to call at the end of the delay
   const callback = React.useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
   // Create the timer
