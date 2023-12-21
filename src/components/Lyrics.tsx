@@ -58,17 +58,14 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   // Calculate time deltas ie. time between highlighting each line of the lyrics
   const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? (timeStamps[index + 1] - timestamp) * 1000 : 1000);
   // Callback function for the timer to call at the end of the delay
-  const callback = React.useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
+  const callback = React.useCallback(() => {timeDeltas ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : 1000; setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine);}, [lyricsArray.length]);
   // Create the timer
-  console.log(delay.current);
   const timer = useTimer({ delay: delay.current ?? 1000 }, callback);
   
   // The following line MUST come after the timer so that `timer` is defined and accessible.
   // Note that when the timer is running, the current delay is already being traversed,
-  // so we need to set the delay to the next one (i.e currentLine + 1)
-  delay.current = timeDeltas ? (timer.isRunning() ? (timeDeltas.length > currentLine + 1 ? timeDeltas[currentLine + 1] : 1000) : (timeDeltas.length > currentLine ? timeDeltas[currentLine] : 1000)) : 1000;
-  // console.log(delay.current);
-
+  // so we need to set the delay to the next one (i.e currentLine + 2)
+  delay.current = timeDeltas ? (timer.isRunning() ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : (timeDeltas.length > currentLine ? timeDeltas[currentLine] : 1000)) : 1000;
 
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
@@ -87,14 +84,14 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
       else if (e.shiftKey && e.key === "Enter") {
         const lyricsElement = document.getElementById(lId.current);
         if (e.repeat) {
-          lyricsElement?.scrollTo({ top: lyricsElement.scrollTop - lyricsElement.getBoundingClientRect()?.height??200, behavior: "smooth" });
+          lyricsElement?.scrollTo({ top: lyricsElement.scrollTop - lyricsElement.getBoundingClientRect().height, behavior: "smooth" });
         } else {
-          lyricsElement?.scrollTo({ top: lyricsElement.scrollTop - lyricsElement.getBoundingClientRect()?.height??200, behavior: "smooth" });
+          lyricsElement?.scrollTo({ top: lyricsElement.scrollTop - lyricsElement.getBoundingClientRect().height, behavior: "smooth" });
         }
       }
       else if (e.key === "Enter") {
         const lyricsElement = document.getElementById(lId.current);
-        lyricsElement?.scrollTo({ top: lyricsElement.scrollTop + lyricsElement.getBoundingClientRect()?.height??200, behavior: "smooth" });
+        lyricsElement?.scrollTo({ top: lyricsElement.scrollTop + lyricsElement.getBoundingClientRect().height, behavior: "smooth" });
       }
       
       if (e.repeat) {
@@ -230,7 +227,7 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
                 if (onPlay && timeStamps && timeStamps.length > index) onPlay(timeStamps[index]);
               }
             } else {
-              // delay.current = timeDeltas ? (timeDeltas.length > index ? timeDeltas[index] : 1000) : 1000;
+              delay.current = timeDeltas ? (timeDeltas.length > index ? timeDeltas[index] : 1000) : 1000;
               timer.pause();
               if (onPause) onPause();
               setCurrentLine(index);
