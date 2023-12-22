@@ -65,8 +65,8 @@ export const lyrics = `
 [03:21.25]And if I work tonight
 [03:23.80]If I'm so tired tonight
 [03:26.96]I'll fall asleep when I'm home
-[03:30.73]When I'm home
-[03:35.50]When I'm home
-[03:40.09]When I'm home
-[03:44.88]When I'm home
+[03:31.50]When I'm home
+[03:36.50]When I'm home
+[03:40.90]When I'm home
+[03:46.10]When I'm home
 `;
