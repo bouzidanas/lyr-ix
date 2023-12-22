@@ -54,20 +54,28 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
 
   // If timestamps are not provided, look for them in the lyrics (lrc format)
   const timeStamps = timestamps ?? lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).timestamps : undefined;
-
+  
   // Calculate time deltas ie. time between highlighting each line of the lyrics
   const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? (timeStamps[index + 1] - timestamp) * 1000 : 1000);
   
   // Callback function for the timer to call at the end of the delay
   const callback = React.useCallback(() => {timeDeltas ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : 1000; setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine);}, [lyricsArray.length]);
   
+  // Stabalize delay on play action
+  if (action !== lastAction.current && action === "play") {
+    delay.current = timeDeltas ? (delay.current ? (timeDeltas.length > currentLine? timeDeltas[currentLine] : 1000) : timeDeltas[0]) : 1000;
+  }
+  
   // Create the timer
   const timer = useTimer({ delay: delay.current?delay.current:1000}, callback);
+  // console.log("============================");
+  // console.log(lyricsArray[currentLine]);
+  // console.log("Next: ", delay.current);
   
   // The following line MUST come after the timer so that `timer` is defined and accessible.
   // Note that when the timer is running, the current delay is already being traversed,
   // so we need to set the delay to the next one (i.e currentLine + 2)
-  delay.current = timeDeltas ? (delay.current ? (timer.isRunning() ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : (timeDeltas.length > currentLine + 1? timeDeltas[currentLine + 1] : 1000)) : timeDeltas[0]) : 1000;
+  delay.current = timeDeltas ? (delay.current ? (timer.isRunning() ? (callbackAfterRender.current > 0 ? delay.current : (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000)) : (timeDeltas.length > currentLine + 1? timeDeltas[currentLine + 1] : 1000)): timeDeltas[0]) : 1000;
 
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
@@ -151,7 +159,6 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
       callbackAfterRender.current = 2
     }
   }
-
   useEffect(() => {
     if (callbackAfterRender.current > 0) {
       if (callbackAfterRender.current === 1) {
