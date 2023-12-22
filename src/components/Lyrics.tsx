@@ -48,7 +48,7 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
-  const delay = useRef<number>(1000);
+  const delay = useRef<number>(0);
   const lastAction = useRef<"play" | "pause" | "none">('none');
   const callbackAfterRender = useRef<number>(0);
 
@@ -57,15 +57,17 @@ const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start
 
   // Calculate time deltas ie. time between highlighting each line of the lyrics
   const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? (timeStamps[index + 1] - timestamp) * 1000 : 1000);
+  
   // Callback function for the timer to call at the end of the delay
   const callback = React.useCallback(() => {timeDeltas ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : 1000; setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine);}, [lyricsArray.length]);
+  
   // Create the timer
-  const timer = useTimer({ delay: delay.current ?? 1000 }, callback);
+  const timer = useTimer({ delay: delay.current?delay.current:1000}, callback);
   
   // The following line MUST come after the timer so that `timer` is defined and accessible.
   // Note that when the timer is running, the current delay is already being traversed,
   // so we need to set the delay to the next one (i.e currentLine + 2)
-  delay.current = timeDeltas ? (timer.isRunning() ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : (timeDeltas.length > currentLine ? timeDeltas[currentLine] : 1000)) : 1000;
+  delay.current = timeDeltas ? (delay.current ? (timer.isRunning() ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : (timeDeltas.length > currentLine + 1? timeDeltas[currentLine + 1] : 1000)) : timeDeltas[0]) : 1000;
 
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
@@ -207,8 +209,6 @@ ${theme === "spotify" ? `& div.line {
 }` : "")}
 ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
-  // console.log("render");
-
   return (
     <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >
       <Global styles={CSS(googleFonts)} />
@@ -227,7 +227,7 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
                 if (onPlay && timeStamps && timeStamps.length > index) onPlay(timeStamps[index]);
               }
             } else {
-              delay.current = timeDeltas ? (timeDeltas.length > index ? timeDeltas[index] : 1000) : 1000;
+              delay.current = timeDeltas ? (timeDeltas.length > index? timeDeltas[index] : 1000) : 1000;
               timer.pause();
               if (onPause) onPause();
               setCurrentLine(index);

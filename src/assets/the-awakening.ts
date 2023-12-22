@@ -1,13 +1,13 @@
 export const lyrics = `
 [00:00.00]♫
-[00:02.60]If I bleed tonight
+[00:02.90]If I bleed tonight
 [00:05.40]If I am sad tonight
 [00:08.20]I don't have a job to find
 [00:11.65]And if I work tonight
 [00:14.60]If I'm so tired tonight
 [00:17.67]I'll fall asleep when I'm home
 [00:21.10]When I'm home
-[00:23.79]♫
+[00:23.78]♫
 [00:42.30]I was just so far from here
 [00:44.62]Focused on my own way
 [00:47.05]Without never looking back
