@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import LyricsCard from './components/LyricsCard.tsx'
 import './index.css'
