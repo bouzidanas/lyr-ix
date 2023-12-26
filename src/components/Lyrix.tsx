@@ -25,7 +25,7 @@ export const processLrcLyrics = (lyrics: string) => {
   return { timestamps, processedLines };
 }
 
-interface LyrixProps {
+export interface LyrixProps {
   lyrics: string;
   className?: string;
   css?: string | CSSObject;

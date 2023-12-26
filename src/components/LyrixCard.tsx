@@ -4,7 +4,7 @@ import { Lyrix } from './Lyrix';
 import { HiOutlinePlay, HiOutlinePause } from "react-icons/hi2"
 import { lyrics } from '../assets/the-awakening';
 
-interface LyrixCardProps {
+export interface LyrixCardProps {
   title?: string;
   lrc?: string;
   src?: string;
