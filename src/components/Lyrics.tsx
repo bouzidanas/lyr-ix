@@ -9,7 +9,7 @@ const googleFonts = `@import url('https://fonts.googleapis.com/css2?family=Heebo
 const lrcTimestampRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
 
 // Convert LRC lyrics to timestamps and processed lines
-const processLrcLyrics = (lyrics: string) => {
+export const processLrcLyrics = (lyrics: string) => {
   const lines = lyrics.split("\n");
   const timestamps: number[] = [];
   const processedLines: string[] = [];
@@ -44,7 +44,7 @@ interface LyricsProps {
   onUserLineChange?: (line: number, time: number) => void;
 }
 
-const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onUserLineChange = undefined, onPause = undefined, onPlay = undefined }: LyricsProps) => {
+export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onUserLineChange = undefined, onPause = undefined, onPlay = undefined }: LyricsProps) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
@@ -227,6 +227,7 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
           onClick={() => {
             if (currentLine === index) {
               if (timer.isRunning()) {
+                delay.current = timeDeltas ? (timeDeltas.length > index? timeDeltas[index] : 1000) : 1000;
                 timer.pause();
                 if (onPause) onPause();
               } else {
@@ -248,5 +249,3 @@ ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY:
     </div>
   );
 };
-
-export default Lyrics;

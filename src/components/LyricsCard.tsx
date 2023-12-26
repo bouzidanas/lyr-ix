@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import '../App.css'
-import Lyrics from './Lyrics';
+import { Lyrics } from './Lyrics';
 import { HiOutlinePlay, HiOutlinePause } from "react-icons/hi2"
 import { lyrics } from '../assets/the-awakening';
 
