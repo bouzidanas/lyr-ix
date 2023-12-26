@@ -7,10 +7,10 @@ A component for displaying synced song lyrics.
 
 ## Features
 
-- Includes the base component called `<Lyrics>` and an example app component called `<LyricsCard>`.
+- Includes the base component called `<Lyrix>` and an example app component called `<LyrixCard>`.
 - A copyright-free song (.mp3) and an LRC file (containing the lyrics and timestamps) for testing.
   
-### `<Lyrics>` component
+### `<Lyrix>` component
 - Lyrics control media playback positions. If you trigger play on a line, the media will play from that line's timestamp (i.e beginning of line).
 - Special automatic page scrolling that keeps the current line visible during play.
 - Keyboard shortcuts for controlling media playback and lyrics navigation. `Up`/`Down` arrows for scroll, `Spacebar` for page scroll, and `Enter` for play/pause.
@@ -29,7 +29,7 @@ npm install bouzidanas/lyr-ix
 
 ## Usage
 
-For usage see `<LyricsCard>` component in [`src/components/LyricsCard.js`](https://github.com/bouzidanas/lyr-ix/blob/master/src/components/LyricsCard.tsx) of this repo. It is a simple example of how to use the `<Lyrics>` component.
+For usage see `<LyrixCard>` component in [`src/components/LyrixCard.js`](https://github.com/bouzidanas/lyr-ix/blob/master/src/components/LyrixCard.tsx) of this repo. It is a simple example of how to use the `<Lyrix>` component.
 
 ## Themes
 ### `lyr-ix` theme

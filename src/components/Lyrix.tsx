@@ -25,7 +25,7 @@ export const processLrcLyrics = (lyrics: string) => {
   return { timestamps, processedLines };
 }
 
-interface LyricsProps {
+interface LyrixProps {
   lyrics: string;
   className?: string;
   css?: string | CSSObject;
@@ -45,7 +45,7 @@ interface LyricsProps {
   onLineChange?: (line: number, time: number) => void;
 }
 
-export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyricsProps) => {
+export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
@@ -85,6 +85,7 @@ export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}
       if (e.key === " " || e.key === "Spacebar") {
         e.preventDefault();
         if (timer.isRunning()) {
+          delay.current = timeDeltas ? (timeDeltas.length > currentLine? timeDeltas[currentLine] : 1000) : 1000;
           timer.pause();
           if (onPause) onPause();
         } else {
@@ -157,6 +158,7 @@ export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}
       callbackAfterRender.current = 1
     }
     else if (action === "pause") {
+      delay.current = timeDeltas ? (timeDeltas.length > currentLine? timeDeltas[currentLine] : 1000) : 1000;
       timer.pause();
       callbackAfterRender.current = 2
     }

@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom/client'
-import LyricsCard from './components/LyricsCard.tsx'
+import { LyrixCard }  from './components/LyrixCard'
 import './index.css'
 // import { lyrics } from './assets/mural';
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <LyricsCard 
+    <LyrixCard 
       // title='Mural - Lupe Fiasco'
       // src='/Mural.mp3'
       // lrc={lyrics}
