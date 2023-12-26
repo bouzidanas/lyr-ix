@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+/** @jsxImportSource @emotion/react */
 import { css as CSS, Global } from '@emotion/react'
+import React, { useEffect, useRef, useState } from 'react';
 import type { CSSObject } from '@emotion/react';
 import { useTimer } from "react-use-precision-timer";
 import { v4 as uuidv4 } from 'uuid';
