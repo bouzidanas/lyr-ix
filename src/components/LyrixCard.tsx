@@ -15,11 +15,12 @@ interface LyrixCardProps {
   start?: number;
   trailingSpace?: string;
   fadeStop?: string;
+  mute?: boolean;
   disablePlayButton?: boolean;
   onLineChange?: (line: number) => void;
 }
 
-export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', disablePlayButton=false, onLineChange=undefined }: LyrixCardProps) => {
+export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', mute=false, disablePlayButton=false, onLineChange=undefined }: LyrixCardProps) => {
   const [action, setAction] = useState<"play" | "pause" | "none">('pause');
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -76,7 +77,7 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
               {title}
           </span>
         </div>
-        <audio ref={audioRef} src={src} onEnded={() => handleOnPause()} />
+        <audio ref={audioRef} src={src} muted={mute} onEnded={() => handleOnPause()} />
       </div>
   )
 }
