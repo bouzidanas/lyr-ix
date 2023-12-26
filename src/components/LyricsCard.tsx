@@ -15,9 +15,10 @@ interface LyricCardProps {
   start?: number;
   trailingSpace?: string;
   fadeStop?: string;
+  onLineChange?: (line: number) => void;
 }
 
-const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%' }: LyricCardProps) => {
+const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', onLineChange=undefined }: LyricCardProps) => {
   const [action, setAction] = useState<"play" | "pause" | "none">('pause');
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -58,6 +59,7 @@ const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - T
           theme={theme}
           trailingSpace={trailingSpace}
           onUserLineChange={handleOnUserLineChange}
+          onLineChange={onLineChange}
           onPause={handleOnPause}
           onPlay={handleOnPlay}
           action={action}
