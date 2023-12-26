@@ -42,9 +42,10 @@ interface LyricsProps {
   onPlay?: (time: number) => void;
   onPause?: () => void;
   onUserLineChange?: (line: number, time: number) => void;
+  onLineChange?: (line: number, time: number) => void;
 }
 
-export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onUserLineChange = undefined, onPause = undefined, onPlay = undefined }: LyricsProps) => {
+export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyricsProps) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
@@ -148,6 +149,7 @@ export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}
     }
   }, [currentLine, lyricsArray.length, readScrollRatio]);
 
+  // Respond to the action prop changes (the following `if` block and the `useEffect` hook below it)
   if (action !== lastAction.current) {
     lastAction.current = action;
     if (action === "play") {
@@ -159,6 +161,11 @@ export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}
       callbackAfterRender.current = 2
     }
   }
+  // Warning: Callbacks functions should not be executed during this component's render phase
+  // because they may cause parent component to re-render at the same time which is
+  // known to be a source of problems. 
+  // So the callback in response to action prop changes is deferred to after the render phase
+  // using a useEffect hook.
   useEffect(() => {
     if (callbackAfterRender.current > 0) {
       if (callbackAfterRender.current === 1) {
@@ -170,6 +177,14 @@ export const Lyrics: React.FC<LyricsProps> = ({ lyrics, className = "", css = {}
       }
     }
   });
+
+  // Execute the onLineChange callback when `currentLine` changes after render using useEffect.
+  // Warning: Callbacks functions should not be executed during this component's render phase
+  // because they may cause parent component to re-render at the same time which is
+  // known to be a source of problems.
+  useEffect(() => {
+    onLineChange && onLineChange(currentLine, timeStamps && timeStamps.length > currentLine ? timeStamps[currentLine] : -1);
+  }, [currentLine]);
 
   // Add default CSS in an overideable way
   const completeCSS = typeof css === "string" ? `display: flex;

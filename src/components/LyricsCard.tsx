@@ -22,6 +22,10 @@ const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - T
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  const handleOnLineChange = (time: number) => {
+    console.log(time);
+  }
+
   const handleOnUserLineChange = (time: number) => {
     audioRef.current? audioRef.current.currentTime = time : null;
   }
@@ -58,6 +62,7 @@ const LyricsCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - T
           theme={theme}
           trailingSpace={trailingSpace}
           onUserLineChange={handleOnUserLineChange}
+          onLineChange={handleOnLineChange}
           onPause={handleOnPause}
           onPlay={handleOnPlay}
           action={action}
