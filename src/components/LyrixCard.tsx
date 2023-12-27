@@ -49,7 +49,7 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
   }
 
   return (
-      <div className={'flex flex-col justify-center items-center gap-12 max-w-xl h-full px-6 py-10 sm:h-fit sm:px-12 sm:py-12 bg-black/5 rounded-2xl shadow-xl' + className}>
+      <div className={'flex flex-col justify-center items-center gap-12 max-w-xl h-full px-6 py-10 sm:h-fit sm:px-12 sm:py-12 bg-black/5 rounded-2xl shadow-xl ' + className}>
         <Lyrix 
           key={0}
           className=' max-w-full flex-1 sm:flex-none'
