@@ -22,9 +22,33 @@ A component for displaying synced song lyrics.
 - Other configuration parameters allow for changing start position, setting highlight color, add spacing before and after lyrics, and more.
 
 ## Installation
+This package is not yet published to npm. You can install it directly from GitHub using the following command:
 
 ```bash
 npm install bouzidanas/lyr-ix 
+```
+
+The components in this package use tailwindCSS for styling. To get the components to appear properly, you need to have tailwind installed in the project where you will be using Lyr-ix components. See [tailwindCSS documentation](https://tailwindcss.com/docs/installation) for installation instructions. 
+
+After installing tailwindCSS, you need to add the following string to the content array in your projects `tailwind.config.js` file:
+```js
+"./node_modules/lyr-ix/**/*.{js,ts,jsx,tsx}"
+```
+This will allow tailwind to scan the Lyr-ix components for classes that you can use in your project. Your `tailwind.config.js` file should look something like this:
+
+```diff
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
++    "./node_modules/lyr-ix/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [] ,
+}
 ```
 
 ## Usage
