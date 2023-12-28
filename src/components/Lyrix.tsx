@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css as CSS, Global } from '@emotion/react'
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import type { CSSObject } from '@emotion/react';
 import { useTimer } from 'react-use-precision-timer';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,6 +8,12 @@ import { v4 as uuidv4 } from 'uuid';
 const googleFonts = `@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');`
 
 const lrcTimestampRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+
+export type ActionsHandle = {
+  play: () => void;
+  pause: () => void;
+  isPlaying: () => boolean;
+}
 
 // Convert LRC lyrics to timestamps and processed lines
 export const processLrcLyrics = (lyrics: string) => {
@@ -39,19 +45,17 @@ export interface LyrixProps {
   trailingSpace?: string;
   readScrollRatio?: number;
   theme?: "inherit" | "spotify" | "lyrix";
-  action?: "play" | "pause" | "none";
   onPlay?: (time: number) => void;
   onPause?: () => void;
   onUserLineChange?: (line: number, time: number) => void;
   onLineChange?: (line: number, time: number) => void;
 }
 
-export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", action = "none", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps) => {
+export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
-  const lastAction = useRef<"play" | "pause" | "none">('none');
-  const callbackAfterRender = useRef<number>(0);
+  // const callbackAfterRender = useRef<number>(0);
 
   // If timestamps are not provided, look for them in the lyrics (lrc format)
   const timeStamps = timestamps ?? lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).timestamps : undefined;
@@ -71,6 +75,24 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
   const pauseTimer = () => {
     timerRef.current.stop();
   }
+
+  // Expose the timer's play and pause methods to the parent component
+  // -------------------------------------------------------------------
+  // I dont know how expensive setting the ref is, but if it is expensive
+  // note that the ref needs to be updated only when currentLine changes.
+  // The current assumption is that setting the ref is not expensive so
+  // the ref is set every render.
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      startTimer();
+      if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
+    },
+    pause: () => {
+      pauseTimer();
+      if (onPause) onPause();
+    },
+    isPlaying: () => timerRef.current.isRunning(),
+  }));
   
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
@@ -143,34 +165,23 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
     }
   }, [currentLine, lyricsArray.length, readScrollRatio]);
   
-  // Respond to the action prop changes (the following `if` block and the `useEffect` hook below it)
-  if (action !== lastAction.current) {
-    lastAction.current = action;
-    if (action === "play") {
-      startTimer();
-      callbackAfterRender.current = 1
-    }
-    else if (action === "pause") {
-      pauseTimer();
-      callbackAfterRender.current = 2
-    }
-  }
-  // Warning: Callbacks functions should not be executed during this component's render phase
-  // because they may cause parent component to re-render at the same time which is
-  // known to be a source of problems. 
-  // So the callback in response to action prop changes is deferred to after the render phase
-  // using a useEffect hook.
-  useEffect(() => {
-    if (callbackAfterRender.current > 0) {
-      if (callbackAfterRender.current === 1) {
-        callbackAfterRender.current = 0;
-        if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
-      } else if (callbackAfterRender.current === 2) {
-        callbackAfterRender.current = 0;
-        if (onPause) onPause();
-      }
-    }
-  });
+  // // Warning: Callbacks functions should not be executed during this component's render phase
+  // // because they may cause parent component to re-render at the same time which is
+  // // known to be a source of problems. 
+  // // The following useEffect is used to execute pending `onPlay`and `onPause`callbacks after render.
+  // // This is necessary for when the timer is started or paused inside the render phase, ie where the 
+  // // callbacks should not be directly called from.
+  // useEffect(() => {
+  //   if (callbackAfterRender.current > 0) {
+  //     if (callbackAfterRender.current === 1) {
+  //       callbackAfterRender.current = 0;
+  //       if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
+  //     } else if (callbackAfterRender.current === 2) {
+  //       callbackAfterRender.current = 0;
+  //       if (onPause) onPause();
+  //     }
+  //   }
+  // });
   
   // Execute the onLineChange callback when `currentLine` changes after render using useEffect.
   // Warning: Callbacks functions should not be executed during this component's render phase
@@ -255,4 +266,4 @@ return (
       <div key="space-after" className="spacer" css={CSS({ minHeight: trailingSpace })}></div>
     </div>
   );
-};
+});
