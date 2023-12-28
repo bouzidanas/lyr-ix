@@ -9,6 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       // title='Mural - Lupe Fiasco'
       // src='/Mural.mp3'
       // lrc={lyrics}
+      // disablePlayButton={true}
       // highlightColor='#f6bd60'
     />,
 )

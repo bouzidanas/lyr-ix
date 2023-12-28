@@ -67,10 +67,10 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
           onPlay={handleOnPlay}
         />
         <div className='flex flex-row justify-left items-center h-10 w-full gap-5 mb-[-0.7rem]' >
-          <button onClick={disablePlayButton ? undefined : () => togglePlay()} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 m-[-4px] mb-[-6px]' style={{color: highlightColor}} >
+          <button onClick={() => togglePlay()} disabled={disablePlayButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 m-[-4px] mb-[-6px]' style={{color: highlightColor}} >
             {usePlayIcon ? 
-              <HiOutlinePlay className='cursor-pointer' size={32} /> : 
-              <HiOutlinePause className='cursor-pointer' size={32} />
+              <HiOutlinePlay size={32} /> : 
+              <HiOutlinePause size={32} />
             }
           </button> 
           <span className='inline-flex text-2xl h-full items-center' style={{color: highlightColor}}>
