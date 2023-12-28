@@ -2,7 +2,7 @@
 import { css as CSS, Global } from '@emotion/react'
 import React, { useEffect, useRef, useState } from 'react';
 import type { CSSObject } from '@emotion/react';
-import { useTimer } from "react-use-precision-timer";
+import { useTimer } from 'react-use-precision-timer';
 import { v4 as uuidv4 } from 'uuid';
 
 const googleFonts = `@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');`
@@ -50,7 +50,6 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
-  const delay = useRef<number>(0);
   const lastAction = useRef<"play" | "pause" | "none">('none');
   const callbackAfterRender = useRef<number>(0);
 
@@ -61,36 +60,29 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
   const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? (timeStamps[index + 1] - timestamp) * 1000 : 1000);
   
   // Callback function for the timer to call at the end of the delay
-  const callback = React.useCallback(() => {timeDeltas ? (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000) : 1000; setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine);}, [lyricsArray.length]);
+  const callback = React.useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
+    
+  // Create the timer
+  const timerRef = useRef(useTimer({ delay: timeDeltas}, callback));
   
-  // Stabalize delay on play action
-  if (action !== lastAction.current && action === "play") {
-    delay.current = timeDeltas ? (delay.current ? (timeDeltas.length > currentLine? timeDeltas[currentLine] : 1000) : timeDeltas[0]) : 1000;
+  const startTimer = () => {
+    timerRef.current.start(undefined, currentLine);
+  }
+  const pauseTimer = () => {
+    timerRef.current.stop();
   }
   
-  // Create the timer
-  const timer = useTimer({ delay: delay.current?delay.current:1000}, callback);
-  // console.log("============================");
-  // console.log(lyricsArray[currentLine]);
-  // console.log("Next: ", delay.current);
-  
-  // The following line MUST come after the timer so that `timer` is defined and accessible.
-  // Note that when the timer is running, the current delay is already being traversed,
-  // so we need to set the delay to the next one (i.e currentLine + 2)
-  delay.current = timeDeltas ? (delay.current ? (timer.isRunning() ? (callbackAfterRender.current > 0 ? delay.current : (timeDeltas.length > currentLine + 2 ? timeDeltas[currentLine + 2] : 1000)) : (timeDeltas.length > currentLine + 1? timeDeltas[currentLine + 1] : 1000)): timeDeltas[0]) : 1000;
-
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === " " || e.key === "Spacebar") {
         e.preventDefault();
-        if (timer.isRunning()) {
-          delay.current = timeDeltas ? (timeDeltas.length > currentLine? timeDeltas[currentLine] : 1000) : 1000;
-          timer.pause();
+        if (timerRef.current.isRunning()) {
+          pauseTimer();
           if (onPause) onPause();
         } else {
-          timer.start();
+          startTimer();
           if (onPlay && timeStamps && timeStamps.length > currentLine) onPlay(timeStamps[currentLine]);
         }
       }
@@ -120,13 +112,13 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
       }
     }
     document.addEventListener('keydown', handleKeyDown);
-
+    
     // Clean up
     return function cleanup() {
       document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [timer, currentLine, timeStamps, onPause, onPlay]);
-
+  }, [timerRef.current, currentLine, timeStamps, onPause, onPlay]);
+  
   // Scrolling logic: Scroll to keep the current line in the
   // desired visible range.
   // -------------------------------------------------------------------
@@ -137,7 +129,7 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
   useEffect(() => {
     const lyricsElement = document.getElementById(lId.current);
     const lineElements = document.getElementsByClassName("line");
-
+    
     if (lyricsElement && lineElements.length > 0 && lineElements.length === lyricsArray.length && currentLine < lyricsArray.length - 1) {
       const lyricsClientRects = lyricsElement.getClientRects();
       const lineClientRects = lineElements[currentLine].getClientRects();
@@ -150,17 +142,16 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
       }
     }
   }, [currentLine, lyricsArray.length, readScrollRatio]);
-
+  
   // Respond to the action prop changes (the following `if` block and the `useEffect` hook below it)
   if (action !== lastAction.current) {
     lastAction.current = action;
     if (action === "play") {
-      timer.start();
+      startTimer();
       callbackAfterRender.current = 1
     }
     else if (action === "pause") {
-      delay.current = timeDeltas ? (timeDeltas.length > currentLine? timeDeltas[currentLine] : 1000) : 1000;
-      timer.pause();
+      pauseTimer();
       callbackAfterRender.current = 2
     }
   }
@@ -180,7 +171,7 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
       }
     }
   });
-
+  
   // Execute the onLineChange callback when `currentLine` changes after render using useEffect.
   // Warning: Callbacks functions should not be executed during this component's render phase
   // because they may cause parent component to re-render at the same time which is
@@ -188,26 +179,26 @@ export const Lyrix: React.FC<LyrixProps> = ({ lyrics, className = "", css = {}, 
   useEffect(() => {
     onLineChange && onLineChange(currentLine, timeStamps && timeStamps.length > currentLine ? timeStamps[currentLine] : -1);
   }, [currentLine]);
-
+  
   // Add default CSS in an overideable way
   const completeCSS = typeof css === "string" ? `display: flex;
-flex-direction: column;
-height: ${height};
-overflow-y: scroll;
--ms-overflow-style: none;
-scrollbar-width: none;
--webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0));
-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0));
-& div.line.current {
-  color: ${highlightColor};
-  filter: none;
+  flex-direction: column;
+  height: ${height};
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0));
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0));
+  & div.line.current {
+    color: ${highlightColor};
+    filter: none;
 }
 & div.line:hover {
   color: ${highlightColor};
   filter: none;
 }
 &::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 ${theme === "spotify" ? `& div.line {
   font-family: 'Heebo', sans-serif;
@@ -234,27 +225,25 @@ ${theme === "spotify" ? `& div.line {
 }` : "")}
 ${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
-  return (
-    <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >
+return (
+  <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >
       <Global styles={CSS(googleFonts)} />
       <div key="space-before" className="spacer" css={CSS({ minHeight: trailingSpace })}></div>
       {lyricsArray.map((line, index) => (
         <div
-          key={index}
-          className={"line " + (index === currentLine ? "current" : "")}
-          onClick={() => {
-            if (currentLine === index) {
-              if (timer.isRunning()) {
-                delay.current = timeDeltas ? (timeDeltas.length > index? timeDeltas[index] : 1000) : 1000;
-                timer.pause();
-                if (onPause) onPause();
+        key={index}
+        className={"line " + (index === currentLine ? "current" : "")}
+        onClick={() => {
+          if (currentLine === index) {
+            if (timerRef.current.isRunning()) {
+              pauseTimer();
+              if (onPause) onPause();
               } else {
-                timer.start();
+                startTimer();
                 if (onPlay && timeStamps && timeStamps.length > index) onPlay(timeStamps[index]);
               }
             } else {
-              delay.current = timeDeltas ? (timeDeltas.length > index? timeDeltas[index] : 1000) : 1000;
-              timer.pause();
+              pauseTimer();
               if (onPause) onPause();
               setCurrentLine(index);
               if (onUserLineChange) onUserLineChange(index, timeStamps && timeStamps.length > index ? timeStamps[index] : -1);

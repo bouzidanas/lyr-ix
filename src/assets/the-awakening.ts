@@ -1,7 +1,7 @@
 export const lyrics = `
 [00:00.00]♫
-[00:02.90]If I bleed tonight
-[00:05.40]If I am sad tonight
+[00:06.90]If I bleed tonight
+[00:07.40]If I am sad tonight
 [00:08.20]I don't have a job to find
 [00:11.65]And if I work tonight
 [00:14.60]If I'm so tired tonight
