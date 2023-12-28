@@ -11,14 +11,14 @@ A component for displaying synced song lyrics.
 - A copyright-free song (.mp3) and an LRC file (containing the lyrics and timestamps) for testing.
   
 ### `<Lyrix>` component
-- Lyrics control media playback positions. If you trigger play on a line, the media will play from that line's timestamp (i.e beginning of line).
+- Lyrics control media playback positions. If you trigger play on a line, the media will play from that line's timestamp (i.e beginning of line). This means that the component restricts navigation to fixed points in provided audio track.
 - Special automatic page scrolling that keeps the current line visible during play.
-- Keyboard shortcuts for controlling media playback and lyrics navigation. `Up`/`Down` arrows for scroll, `Spacebar` for page scroll, and `Enter` for play/pause.
-- Mouse scroll for scroll and click for play/pause. Clicking any line will highlight that line and pause media if playing, and move play position to beginning of line. Clicking the line again will play media from this new position.
+- Keyboard shortcuts for controlling media playback and lyrics navigation. `Up`/`Down` arrows for scroll, `Enter`/`Shift`+`Enter` for page scroll, and `Space` for play/pause.
+- Mouse scroll for scroll and click for play/pause. Clicking any line will highlight that line, pause media if playing, and move play position to beginning of line. Clicking the line again will play media from this new position.
 - Two built-in themes: `lyr-ix` and `spotify`. `lyr-ix` is the default theme. `spotify` is a theme that mimics the Spotify lyrics aesthetic.
-- Option to provide your own CSS to customize the look and feel of the component. Also includes a `className` prop for adding your own classes or tailwindCSS classes.
-- Event callbacks for `onPlay`, `onPause`, and `onUserLineChange`.
-- `action` prop for triggering media playback from outside the component like, for example, via a button in the app. This is also useful for syncing the component with a media player.
+- Option to provide your own CSS to customize the look and feel of the component. Also includes a `className` prop for adding tailwindCSS classes or your own classes.
+- Event callbacks for `onPlay`, `onPause`, `onLineChange`, and `onUserLineChange`.
+- Exposed functions `isPlaying`, `play`, and `pause` for triggering media playback from outside the component like, for example, via a button in the parent app. This is also useful for syncing the component with a media player.
 - Other configuration parameters allow for changing start position, setting highlight color, add spacing before and after lyrics, and more.
 
 ## Installation
@@ -53,7 +53,14 @@ export default {
 
 ## Usage
 
-For usage see `<LyrixCard>` component in [`src/components/LyrixCard.js`](https://github.com/bouzidanas/lyr-ix/blob/master/src/components/LyrixCard.tsx) of this repo. It is a simple example of how to use the `<Lyrix>` component.
+For usage see `<LyrixCard>` component in [`src/components/LyrixCard.js`](https://github.com/bouzidanas/lyr-ix/blob/master/src/components/LyrixCard.tsx) of this repo. It is a simple example of how to use the `<Lyrix>` component. Note that you will have to change the import statement in your project. For example, the import statement in `LyrixCard.tsx`:
+```ts
+import { Lyrix, ActionsHandle } from './Lyrix';
+```
+should change to:
+```ts
+import { Lyrix, ActionsHandle } from 'lyr-ix';
+```
 
 ## Themes
 ### `lyr-ix` theme
