@@ -13,5 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       // highlightColor='#f6bd60'
       // fadeStop='5%'
       // trailingSpace='0.5rem'
+      // mute={true}
+      // disableMuteButton={true}
     />,
 )

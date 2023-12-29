@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import '../App.css'
 import { Lyrix, ActionsHandle } from './Lyrix';
-import { HiOutlinePlay, HiOutlinePause } from "react-icons/hi2"
+import { HiOutlinePlay, HiOutlinePause, HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from "react-icons/hi2"
 import { lyrics } from '../assets/the-awakening';
 
 export interface LyrixCardProps {
@@ -18,11 +18,13 @@ export interface LyrixCardProps {
   scrollRatio?: number;
   mute?: boolean;
   disablePlayButton?: boolean;
+  disableMuteButton?: boolean;
   onLineChange?: (line: number) => void;
 }
 
-export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, mute=false, disablePlayButton=false, onLineChange=undefined }: LyrixCardProps) => {
+export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined }: LyrixCardProps) => {
   const [usePlayIcon, setUsePlayIcon] = useState(true);
+  const [muted, setMuted] = useState(mute);
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyrixRef = useRef<ActionsHandle>(null);
 
@@ -75,11 +77,17 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
               <HiOutlinePause size={32} />
             }
           </button> 
-          <span className='inline-flex text-2xl h-full items-center' style={{color: highlightColor}}>
+          <span className='inline-flex text-2xl h-full items-center flex-1' style={{color: highlightColor}}>
               {title}
           </span>
+          <button onClick={() => setMuted(!muted)} disabled={disableMuteButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 mb-[-2px]' style={{color: highlightColor, opacity: disableMuteButton ? 0.5 : 1}}>
+            {muted ?
+              <HiOutlineSpeakerXMark size={28} /> :
+              <HiOutlineSpeakerWave size={28} />
+            }
+          </button>
         </div>
-        <audio ref={audioRef} src={src} muted={mute} onEnded={() => handleOnPause()} />
+        <audio ref={audioRef} src={src} muted={muted} onEnded={() => handleOnPause()} />
       </div>
   )
 }
