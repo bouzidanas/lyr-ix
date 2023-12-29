@@ -15,12 +15,13 @@ export interface LyrixCardProps {
   start?: number;
   trailingSpace?: string;
   fadeStop?: string;
+  scrollRatio?: number;
   mute?: boolean;
   disablePlayButton?: boolean;
   onLineChange?: (line: number) => void;
 }
 
-export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', mute=false, disablePlayButton=false, onLineChange=undefined }: LyrixCardProps) => {
+export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, mute=false, disablePlayButton=false, onLineChange=undefined }: LyrixCardProps) => {
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyrixRef = useRef<ActionsHandle>(null);
@@ -59,6 +60,7 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
           start={start} 
           highlightColor={highlightColor}
           fadeStop={fadeStop}
+          readScrollRatio={scrollRatio}
           theme={theme}
           trailingSpace={trailingSpace}
           onUserLineChange={handleOnUserLineChange}
