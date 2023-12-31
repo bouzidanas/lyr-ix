@@ -19,10 +19,12 @@ export interface LyrixCardProps {
   mute?: boolean;
   disablePlayButton?: boolean;
   disableMuteButton?: boolean;
+  lyricsScale?: number;
+  controlsScale?: number;
   onLineChange?: (line: number) => void;
 }
 
-export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined }: LyrixCardProps) => {
+export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, lyricsScale=1, controlsScale=1, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined }: LyrixCardProps) => {
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const [muted, setMuted] = useState(mute);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -63,6 +65,7 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
           highlightColor={highlightColor}
           fadeStop={fadeStop}
           readScrollRatio={scrollRatio}
+          scale={lyricsScale}
           theme={theme}
           trailingSpace={trailingSpace}
           onUserLineChange={handleOnUserLineChange}
@@ -71,16 +74,16 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
           onPlay={handleOnPlay}
         />
         <div className='flex flex-row justify-left items-center h-10 w-full gap-5 mb-[-0.7rem]' >
-          <button onClick={() => togglePlay()} disabled={disablePlayButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 m-[-4px] mb-[-6px]' style={{color: highlightColor}} >
+          <button onClick={() => togglePlay()} disabled={disablePlayButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 m-[-4px] mb-[-6px]'  style={{color: highlightColor, transform:'scaleX('+controlsScale+') scaleY('+controlsScale+')'}} >
             {usePlayIcon ? 
               <HiOutlinePlay size={32} /> : 
               <HiOutlinePause size={32} />
             }
           </button> 
-          <span className='inline-flex text-2xl h-full items-center flex-1' style={{color: highlightColor}}>
+          <span className='inline-flex h-full items-center flex-1 ' style={{color: highlightColor, fontSize: Math.round(controlsScale*15)/10 + "rem", lineHeight: "2rem"}}>
               {title}
           </span>
-          <button onClick={() => setMuted(!muted)} disabled={disableMuteButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 mb-[-2px]' style={{color: highlightColor, opacity: disableMuteButton ? 0.5 : 1}}>
+          <button onClick={() => setMuted(!muted)} disabled={disableMuteButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 mb-[-2px]' style={{color: highlightColor, transform:'scaleX('+controlsScale+') scaleY('+controlsScale+')', opacity: disableMuteButton ? 0.5 : 1}}>
             {muted ?
               <HiOutlineSpeakerXMark size={28} /> :
               <HiOutlineSpeakerWave size={28} />

@@ -45,13 +45,14 @@ export interface LyrixProps {
   trailingSpace?: string;
   readScrollRatio?: number;
   theme?: "inherit" | "spotify" | "lyrix";
+  scale?: number;
   onPlay?: (time: number) => void;
   onPause?: () => void;
   onUserLineChange?: (line: number, time: number) => void;
   onLineChange?: (line: number, time: number) => void;
 }
 
-export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, theme = "inherit", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
+export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, scale = 1, theme = "inherit", onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
@@ -213,28 +214,28 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
 }
 ${theme === "spotify" ? `& div.line {
   font-family: 'Heebo', sans-serif;
-  font-size: 2rem;
+  font-size: ${scale*2}rem;
   font-weight: 700;
-  line-height: 2.4rem;
+  line-height: ${scale*2.4}rem;
   letter-spacing: -.01em;
   color: #000000a2;
   text-align: left;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: ${scale}rem;
+  padding-bottom: ${scale}rem;
 }` : (theme === "lyrix" ? `& div.line {
   font-family: 'Roboto', sans-serif;
-  font-size: 2rem;
+  font-size: ${scale*2}rem;
   font-weight: 700;
-  line-height: 2.4rem;
+  line-height: ${scale*2.4}rem;
   letter-spacing: -.01em;
   color: #ffffff;
   text-align: left;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: ${scale}rem;
+  padding-bottom: ${scale}rem;
   opacity: 0.2;
   filter: blur(1px);
 }` : "")}
-${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: "2rem", fontWeight: "700", lineHeight: "2.4rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: "1rem", paddingBottom: "1rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
+${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: (scale*2)+"rem", fontWeight: "700", lineHeight: (scale*2.4)+"rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: scale + "rem", paddingBottom: scale + "rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: (scale*2)+"rem", fontWeight: "700", lineHeight: (scale*2.4)+"rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: scale+"rem", paddingBottom: scale+"rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
 return (
   <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >
