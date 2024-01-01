@@ -214,9 +214,9 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
 }
 ${theme === "spotify" ? `& div.line {
   font-family: 'Heebo', sans-serif;
-  font-size: ${scale*2}rem;
+  font-size: ${Math.round(scale*20)/10}rem;
   font-weight: 700;
-  line-height: ${scale*2.4}rem;
+  line-height: ${Math.round(scale*24)/10}rem;
   letter-spacing: -.01em;
   color: #000000a2;
   text-align: left;
@@ -224,9 +224,9 @@ ${theme === "spotify" ? `& div.line {
   padding-bottom: ${scale}rem;
 }` : (theme === "lyrix" ? `& div.line {
   font-family: 'Roboto', sans-serif;
-  font-size: ${scale*2}rem;
+  font-size: ${Math.round(scale*20)/10}rem;
   font-weight: 700;
-  line-height: ${scale*2.4}rem;
+  line-height: ${Math.round(scale*24)/10}rem;
   letter-spacing: -.01em;
   color: #ffffff;
   text-align: left;
@@ -235,7 +235,7 @@ ${theme === "spotify" ? `& div.line {
   opacity: 0.2;
   filter: blur(1px);
 }` : "")}
-${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: (scale*2)+"rem", fontWeight: "700", lineHeight: (scale*2.4)+"rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: scale + "rem", paddingBottom: scale + "rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: (scale*2)+"rem", fontWeight: "700", lineHeight: (scale*2.4)+"rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: scale+"rem", paddingBottom: scale+"rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
+${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: scale + "rem", paddingBottom: scale + "rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: scale+"rem", paddingBottom: scale+"rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
 return (
   <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >

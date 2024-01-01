@@ -80,7 +80,7 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
               <HiOutlinePause size={32} />
             }
           </button> 
-          <span className='inline-flex h-full items-center flex-1 ' style={{color: highlightColor, fontSize: Math.round(controlsScale*15)/10 + "rem", lineHeight: "2rem"}}>
+          <span className='inline-flex h-full items-center flex-1 ' style={{color: highlightColor, fontSize: Math.round(controlsScale*150)/100 + "rem", lineHeight: "2rem"}}>
               {title}
           </span>
           <button onClick={() => setMuted(!muted)} disabled={disableMuteButton} className='bg-transparent border-none outline-none focus:border-none focus:outline-none w-fit p-0 mb-[-2px]' style={{color: highlightColor, transform:'scaleX('+controlsScale+') scaleY('+controlsScale+')', opacity: disableMuteButton ? 0.5 : 1}}>
