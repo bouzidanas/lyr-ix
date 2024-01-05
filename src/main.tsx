@@ -6,9 +6,9 @@ import { lyrics } from './assets/mural';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <LyrixCard 
-      title='Mural - Lupe Fiasco'
-      src='/Mural.mp3'
-      lrc={lyrics}
+      // title='Mural - Lupe Fiasco'
+      // src='/Mural.mp3'
+      // lrc={lyrics}
       // disablePlayButton={true}
       // highlightColor='#f6bd60'
       // fadeStop='5%'
