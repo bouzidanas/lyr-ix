@@ -1,6 +1,3 @@
->[!WARNING]
->This component is still in development and is not yet ready for production use.
-
 # Lyr-ix
 
 A component for displaying synced song lyrics.
@@ -64,9 +61,9 @@ import { Lyrix, ActionsHandle } from 'lyr-ix';
 
 ## Themes
 ### `lyr-ix` theme
-![lyr-ix style](https://github.com/bouzidanas/lyr-ix/assets/25779130/a8064cf3-ce29-475b-b3fc-69094b260023)
+![lyr-ix style](https://github.com/bouzidanas/lyr-ix/assets/25779130/1ff19fda-30d5-41db-9550-79178480ec84)
 ### `spotify` theme
-![spotify style](https://github.com/bouzidanas/lyr-ix/assets/25779130/26386213-0193-4813-b6a3-3e1d3176375b)
+![spotify style](https://github.com/bouzidanas/lyr-ix/assets/25779130/0cbcdcf2-15ba-4284-a7cc-1455490ca54d)
 
 ## Demo
 
