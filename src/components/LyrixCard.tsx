@@ -1,8 +1,14 @@
-import { useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import '../App.css'
 import { Lyrix, ActionsHandle } from './Lyrix';
 import { HiOutlinePlay, HiOutlinePause, HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from "react-icons/hi2"
 import { lyrics } from '../assets/the-awakening';
+
+export type LyrixCardElement = {
+  play: () => void;
+  pause: () => void;
+  isPlaying: () => boolean;
+}
 
 export interface LyrixCardProps {
   title?: string;
@@ -23,13 +29,27 @@ export interface LyrixCardProps {
   controlsScale?: number;
   endingDelayBuffer?: number;
   onLineChange?: (line: number) => void;
+  onPlay?: (time: number) => void;
+  onPause?: () => void;
 }
 
-export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, lyricsScale=1, controlsScale=1, endingDelayBuffer=30000, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined }: LyrixCardProps) => {
+export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, lyricsScale=1, controlsScale=1, endingDelayBuffer=30000, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined, onPlay=undefined, onPause=undefined }: LyrixCardProps, ref) => {
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const [muted, setMuted] = useState(mute);
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyrixRef = useRef<ActionsHandle>(null);
+
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      lyrixRef.current?.play();
+    },
+    pause: () => {
+      lyrixRef.current?.pause();
+    },
+    isPlaying: () => {
+      return lyrixRef.current?.isPlaying() ?? false;
+    }
+  }));
 
   const handleOnUserLineChange = (time: number) => {
     audioRef.current? audioRef.current.currentTime = time : null;
@@ -95,4 +115,4 @@ export const LyrixCard = ({ title='The Awakening - Onlap', lrc=lyrics, src='/ONL
         <audio ref={audioRef} src={src} muted={muted} onEnded={() => lyrixRef.current ? lyrixRef.current.pause() : handleOnPause()} />
       </div>
   )
-}
+});
