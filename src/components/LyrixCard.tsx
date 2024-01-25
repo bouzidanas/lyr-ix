@@ -7,6 +7,7 @@ import { lyrics } from '../assets/the-awakening';
 export type LyrixCardElement = {
   play: () => void;
   pause: () => void;
+  load: () => void;
   isPlaying: () => boolean;
 }
 
@@ -46,6 +47,9 @@ export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(({ title='
     },
     pause: () => {
       lyrixRef.current?.pause();
+    },
+    load: () => {
+      audioRef.current?.load();
     },
     isPlaying: () => {
       return lyrixRef.current?.isPlaying() ?? false;
