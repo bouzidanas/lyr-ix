@@ -31,9 +31,10 @@ export interface LyrixCardProps {
   onLineChange?: (line: number) => void;
   onPlay?: (time: number) => void;
   onPause?: () => void;
+  onEnd?: () => void;
 }
 
-export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, lyricsScale=1, controlsScale=1, endingDelayBuffer=30000, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined, onPlay=undefined, onPause=undefined }: LyrixCardProps, ref) => {
+export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(({ title='The Awakening - Onlap', lrc=lyrics, src='/ONLAP - The Awakening.mp3', height='62vh', className='', theme='lyrix', highlightColor='#ffffffbb', start=0, trailingSpace='0rem', fadeStop='0%', scrollRatio=1, lyricsScale=1, controlsScale=1, endingDelayBuffer=30000, mute=false, disablePlayButton=false, disableMuteButton=false, onLineChange=undefined, onPlay=undefined, onPause=undefined, onEnd=undefined }: LyrixCardProps, ref) => {
   const [usePlayIcon, setUsePlayIcon] = useState(true);
   const [muted, setMuted] = useState(mute);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -58,13 +59,21 @@ export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(({ title='
   const handleOnPause = () => {
     audioRef.current?.pause();
     setUsePlayIcon(true);
+    onPause ? onPause() : null;
   }
   
   const handleOnPlay = (time: number) => {
     audioRef.current? audioRef.current.currentTime = time : null;
     audioRef.current?.play();
     setUsePlayIcon(false);
+    onPlay ? onPlay(time) : null;
   }
+
+  const handleOnEnd = () => {
+    lyrixRef.current ? lyrixRef.current.pause() : handleOnPause();
+    onEnd ? onEnd() : null;
+  }
+
 
   const togglePlay = () => {
     if (lyrixRef.current && lyrixRef.current.isPlaying()) {
@@ -112,7 +121,7 @@ export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(({ title='
             }
           </button>
         </div>
-        <audio ref={audioRef} src={src} muted={muted} onEnded={() => lyrixRef.current ? lyrixRef.current.pause() : handleOnPause()} />
+        <audio ref={audioRef} src={src} muted={muted} onEnded={handleOnEnd} />
       </div>
   )
 });
