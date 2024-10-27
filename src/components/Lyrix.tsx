@@ -29,13 +29,14 @@ export interface LyrixProps {
   theme?: "inherit" | "spotify" | "lyrix";
   scale?: number;
   delayEnd?: number;
+  disableInteractivity?: boolean;
   onPlay?: (time: number) => void;
   onPause?: () => void;
   onUserLineChange?: (line: number, time: number) => void;
   onLineChange?: (line: number, time: number) => void;
 }
 
-export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, scale = 1, theme = "inherit", delayEnd = 10000, onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
+export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, scale = 1, theme = "inherit", delayEnd = 10000, disableInteractivity = false, onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
@@ -82,6 +83,8 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
   // Create a keydown event listener to pause/play the timer 
   // (and handle cleanup when the component unmounts)
   useEffect(() => {
+    if (disableInteractivity) return;
+
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === " " || e.key === "Spacebar") {
         e.preventDefault();
@@ -124,7 +127,7 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
     return function cleanup() {
       document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [currentLine, timeStamps, onPause, onPlay, startTimer]);
+  }, [currentLine, timeStamps, onPause, onPlay, startTimer, disableInteractivity]);
   
   // Scrolling logic: Scroll to keep the current line in the
   // desired visible range.
@@ -189,10 +192,11 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
     color: ${highlightColor};
     filter: none;
 }
-& div.line:hover {
+${disableInteractivity ? "" : `& div.line:hover {
   color: ${highlightColor};
   filter: none;
 }
+`}
 &::-webkit-scrollbar {
   display: none;
 }
@@ -219,7 +223,7 @@ ${theme === "spotify" ? `& div.line {
   opacity: 0.2;
   filter: blur(1px);
 }` : "")}
-${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: scale + "rem", paddingBottom: scale + "rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: scale+"rem", paddingBottom: scale+"rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
+${css}` : { display: "flex", flexDirection: "column", height: height, overflowY: "scroll", msOverflowStyle: "none", scrollbarWidth: "none", WebkitMaskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, maskImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) ${fadeStop}, rgba(0, 0, 0, 1) calc(100% - ${fadeStop}), rgba(0, 0, 0, 0))`, '& div.line.current': { color: highlightColor, filter: "none", opacity: "1" }, '& div.line:hover': disableInteractivity ? undefined : { color: highlightColor, filter: "none", opacity: "1" }, '&::-webkit-scrollbar': { display: "none" }, '& div.line': theme === 'spotify' ? { fontFamily: "'Heebo', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", paddingTop: scale + "rem", paddingBottom: scale + "rem" } : (theme === "lyrix" ? { fontFamily: "'Roboto', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#ffffff", textAlign: "left", paddingTop: scale+"rem", paddingBottom: scale+"rem", opacity: "0.2", filter: "blur(1px)" } : {}), ...css } as CSSObject;
 
 return (
   <div id={lId.current} className={"lyrics " + className} css={CSS(completeCSS)} >
@@ -230,6 +234,7 @@ return (
         key={index}
         className={"line " + (index === currentLine ? "current" : (index < currentLine ? "past" : "future"))}
         onClick={() => {
+          if (disableInteractivity) return;
           if (currentLine === index) {
             if (timerRef.current.isRunning()) {
               pauseTimer();
