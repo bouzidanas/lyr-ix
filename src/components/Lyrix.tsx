@@ -1,35 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { css as CSS, Global } from '@emotion/react'
-import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback } from 'react';
 import type { CSSObject } from '@emotion/react';
 import { useTimer } from 'react-use-precision-timer';
 import { v4 as uuidv4 } from 'uuid';
+import { lrcTimestampRegex, processLrcLyrics } from '../util/processLRC';
 
 const googleFonts = `@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');`
-
-const lrcTimestampRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
 
 export type ActionsHandle = {
   play: () => void;
   pause: () => void;
   isPlaying: () => boolean;
-}
-
-// Convert LRC lyrics to timestamps and processed lines
-export const processLrcLyrics = (lyrics: string) => {
-  const lines = lyrics.split("\n");
-  const timestamps: number[] = [];
-  const processedLines: string[] = [];
-
-  lines.forEach(line => {
-    const match = lrcTimestampRegex.exec(line);
-    if (match) {
-      timestamps.push((parseInt(match[1]) * 60 * 1000 + parseInt(match[2]) * 1000 + parseInt(match[3])*10) / 1000);
-      processedLines.push(line.replace(lrcTimestampRegex, "").trim());
-    }
-  });
-
-  return { timestamps, processedLines };
 }
 
 export interface LyrixProps {
@@ -71,9 +53,10 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
   // Create the timer
   const timerRef = useRef(useTimer({ delay: timeDeltas}, callback));
   
-  const startTimer = () => {
+  const startTimer = useCallback(() => {
     timerRef.current.start(undefined, currentLine);
-  }
+  }, [currentLine]);
+  
   const pauseTimer = () => {
     timerRef.current.stop();
   }
@@ -141,7 +124,7 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
     return function cleanup() {
       document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [timerRef.current, currentLine, timeStamps, onPause, onPlay]);
+  }, [currentLine, timeStamps, onPause, onPlay, startTimer]);
   
   // Scrolling logic: Scroll to keep the current line in the
   // desired visible range.
@@ -245,7 +228,7 @@ return (
       {lyricsArray.map((line, index) => (
         <div
         key={index}
-        className={"line " + (index === currentLine ? "current" : "")}
+        className={"line " + (index === currentLine ? "current" : (index < currentLine ? "past" : "future"))}
         onClick={() => {
           if (currentLine === index) {
             if (timerRef.current.isRunning()) {
