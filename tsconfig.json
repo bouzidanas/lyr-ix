@@ -21,6 +21,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*", "index.ts"],
+  "paths": {
+      "lyr-ix/*": ["./*", "./src/*"]
+    },
+  "include": ["./src/**/*", "./index.ts", "./" ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
