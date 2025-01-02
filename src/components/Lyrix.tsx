@@ -1,9 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css as CSS, Global } from '@emotion/react'
-import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback } from 'react';
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback, useId } from 'react';
 import type { CSSObject } from '@emotion/react';
 import { useTimer } from 'react-use-precision-timer';
-import { v4 as uuidv4 } from 'uuid';
 import { lrcTimestampRegex, processLrcLyrics } from '../util/processLRC';
 
 const googleFonts = `@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');`
@@ -39,7 +38,7 @@ export interface LyrixProps {
 export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, scale = 1, theme = "inherit", delayEnd = 10000, disableInteractivity = false, onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
   const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
-  const lId = useRef<string>("lyr-ix-" + uuidv4().substring(0, 8));
+  const lId = useRef<string>("lyr-ix-" + useId());
   // const callbackAfterRender = useRef<number>(0);
 
   // If timestamps are not provided, look for them in the lyrics (lrc format)
@@ -49,7 +48,7 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
   const timeDeltas = timeStamps?.map((timestamp, index) => index + 1 < timeStamps.length? (timeStamps[index + 1] - timestamp) * 1000 : delayEnd);
   
   // Callback function for the timer to call at the end of the delay
-  const callback = React.useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
+  const callback = useCallback(() => setCurrentLine(currentLine => currentLine < lyricsArray.length - 1 ? currentLine + 1 : currentLine), [lyricsArray.length]);
     
   // Create the timer
   const timerRef = useRef(useTimer({ delay: timeDeltas}, callback));
