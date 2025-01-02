@@ -1,4 +1,4 @@
-/** @jsxImportSource @emotion/react */
+  /** @jsxImportSource @emotion/react */
 import { css as CSS, Global } from '@emotion/react'
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback, useId } from 'react';
 import type { CSSObject } from '@emotion/react';
@@ -194,6 +194,7 @@ export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className 
 ${disableInteractivity ? "" : `& div.line:hover {
   color: ${highlightColor};
   filter: none;
+  opacity: 1;
 }
 `}
 &::-webkit-scrollbar {
