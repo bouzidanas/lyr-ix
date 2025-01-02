@@ -18,7 +18,7 @@
         {
             "path": "processLRC.ts",
             "content": "export const lrcTimestampRegex = /\\[(\\d{2}):(\\d{2})\\.(\\d{2,3})\\]/g;\n// Convert LRC lyrics to timestamps and processed lines\nexport const processLrcLyrics = (lyrics: string) => {\n    const lines = lyrics.split('\\n');\n    const timestamps: number[] = [];\n    const processedLines: string[] = [];\n  \n    lines.forEach(line => {\n      const match = lrcTimestampRegex.exec(line);\n      if (match) {\n        timestamps.push((parseInt(match[1]) * 60 * 1000 + parseInt(match[2]) * 1000 + parseInt(match[3])*10) / 1000);\n        processedLines.push(line.replace(lrcTimestampRegex, '').trim());\n      }\n    });\n  \n    return { timestamps, processedLines };\n  }",
-            "type": "registry:util"
+            "type": "registry:lib"
         }
     ],
     "tailwind": {},
