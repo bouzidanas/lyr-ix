@@ -26,5 +26,5 @@
     "moduleSpecifier": "@/components/Lyrix",
     "nextVersion": "14.2.16"
   },
-  "docs": "Placeholder for LyrixCard component"
+  "docs": "To import a lyr-ix component, use the following import statement:\n```tsx\nimport { Lyrix } from '@/components/Lyrix';\n```\n\nIf errors appear, make sure that the following `emotion` pragma is at the top of `Lyrix.tsx` (in the components directory):\n```tsx\n/** @jsxImportSource @emotion/react */\n```\n\nNote that eslint might complain about some of the terniary expressions. You can edit the eslint config to allow these expressions. Or you can force eslint to ignore `no-unused-expressions` in the file by adding `/* eslint-disable no-unused-expressions */` to the top of the file."
 }
