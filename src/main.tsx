@@ -5,7 +5,7 @@ import './index.css'
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <LyrixCard 
+    <LyrixCard
       // title='Mural - Lupe Fiasco'
       // src='/Mural.mp3'
       // lrc={lyrics}
