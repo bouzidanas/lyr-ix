@@ -37,7 +37,7 @@ export interface LyrixProps {
 }
 
 export const Lyrix = forwardRef<ActionsHandle, LyrixProps>(({ lyrics, className = "", css = {}, start = 0, highlightColor = "#ffffffbb", height = "", fadeStop = "10ex", trailingSpace = "10rem", timestamps = undefined, readScrollRatio = 1, scale = 1, theme = "inherit", delayEnd = 10000, disableInteractivity = false, singleLineMode = false, onPause = undefined, onPlay = undefined, onUserLineChange = undefined, onLineChange = undefined }: LyrixProps, ref) => {
-  const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics).processedLines : lyrics.split("\n"));
+  const [lyricsArray] = useState<string[]>(lrcTimestampRegex.test(lyrics) ? processLrcLyrics(lyrics, !singleLineMode).processedLines : lyrics.split("\n"));
   const [currentLine, setCurrentLine] = useState<number>(start);
   const lId = useRef<string>("lyr-ix-" + useId());
   // const callbackAfterRender = useRef<number>(0);
@@ -314,11 +314,12 @@ export const Lyric = forwardRef<ActionsHandle, LyricProps>(function Lyric({ lyri
   const { words, timestamps } = processLrcLine(lyric);
   const lId = useRef<string>("lyr-ic_" + useId());
   
+  console.log(words);
   // Add default CSS in an overideable way
   const completeCSS = typeof css === "string" ? `display: flex;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
+  align-self: start;
   height: 100%;
   & span.word {
     font-family: 'Heebo', sans-serif;
@@ -332,6 +333,12 @@ export const Lyric = forwardRef<ActionsHandle, LyricProps>(function Lyric({ lyri
     opacity: 0;
     transition: opacity 0.5s;
   }
+  & span.word:first-of-type {
+    padding-left: 0;
+  }
+  & span.word:last-of-type {
+    padding-right: 0;
+  }
   & span.current {
     color: ${highlightColor};
     opacity: 1;
@@ -344,11 +351,11 @@ export const Lyric = forwardRef<ActionsHandle, LyricProps>(function Lyric({ lyri
     letter-spacing: -.01em;
     color: #000000a2;
     text-align: left;
-    padding: ${scale}rem;
+    padding: ${scale/5}rem;
     opacity: 0;
     transition: opacity 0.5s;
   }
-  & span.current {
+  & span.past {
     color: ${highlightColor};
     opacity: 1;
   }` : (theme === "lyrix" ? `& span.word {
@@ -359,14 +366,58 @@ export const Lyric = forwardRef<ActionsHandle, LyricProps>(function Lyric({ lyri
     letter-spacing: -.01em;
     color: #ffffff;
     text-align: left;
-    padding: ${scale}rem;
-    opacity: 0;
+    padding: ${scale/5}rem;
+    opacity: 0.2;
     transition: opacity 0.5s;
   }
+  & span.word:first-of-type {
+    padding-left: 0;
+  }
+  & span.word:last-of-type {
+    padding-right: 0;
+  }
   & span.current {
-    color: ${highlightColor}; opacity: 1; 
+    color: ${highlightColor}; 
+    opacity: 0.4; 
+  }
+  & span.past {
+    color: ${highlightColor}; 
+    opacity: 1; 
   }` : "")}
-  ${css}` : { display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", height: "100%", '& span.word': { fontFamily: "'Heebo', sans-serif", fontSize: Math.round(scale*200)/100+"rem", fontWeight: "700", lineHeight: Math.round(scale*240)/100+"rem", letterSpacing: "-0.01em", color: "#000000a2", textAlign: "left", padding: scale+"rem", opacity: "0", transition: "opacity 0.5s" }, '& span.current': { color: highlightColor, opacity: "1" }, ...css } as CSSObject;
+  ${css}` : { 
+              display: "flex", 
+              flexDirection: "row", 
+              alignSelf: "start", 
+              alignItems: "center", 
+              height: "100%", 
+              '& span.word': { 
+                                fontFamily: "'Heebo', sans-serif", 
+                                fontSize: Math.round(scale*200)/100+"rem", 
+                                fontWeight: "700", 
+                                lineHeight: Math.round(scale*240)/100+"rem", 
+                                letterSpacing: "-0.01em", 
+                                color: "#000000a2", 
+                                textAlign: "left", 
+                                padding: scale/4+"rem", 
+                                opacity: "0.2", 
+                                transition: "opacity 0.5s" 
+                              }, 
+              '& span.word:first-of-type': { 
+                                            paddingLeft: "0" 
+                                          },
+              '& span.word:last-of-type':  { 
+                                            paddingRight: "0" 
+                                          },
+              '& span.current': { 
+                                  color: highlightColor, 
+                                  opacity: "0.6" 
+                                }, 
+              '& span.past': {
+                                color: highlightColor, 
+                                opacity: "1" 
+                              },
+              ...css 
+            } as CSSObject;
 
   // Timer stuff
   const timeDeltas = timestamps?.map((timestamp, index) => index + 1 < timestamps.length? (timestamps[index + 1] - timestamp) * 1000 : 200);
@@ -393,10 +444,10 @@ export const Lyric = forwardRef<ActionsHandle, LyricProps>(function Lyric({ lyri
 
   useEffect(() => {
     onWordChange && onWordChange(currentWord);
-  }, [currentWord]);
+  }, [currentWord, onWordChange]);
 
   return (
-    <div id={lId.current} className={"lyric " + className} css={CSS(completeCSS)} >
+    <div id={lId.current} className={"lyric" + className} css={CSS(completeCSS)} >
       <Global styles={CSS(googleFonts)} />
       {words.map((word, index) => (
         <span key={index} className={"word " + (index === currentWord ? "current" : (index < currentWord ? "past" : "future"))} >
